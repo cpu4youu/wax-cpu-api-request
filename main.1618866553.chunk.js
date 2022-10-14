@@ -1177,6 +1177,7 @@
 				h = b.WAX_ON_URL,
 				m = (b.IDM_API_URL, b.API_URL),
 				v = l.a.create({ withCredentials: !1 }),
+				// vv = l.a.create({ withCredentials: !1 }),
 				g = (function () {
 					var e = o()(
 						s.a.mark(function e(t) {
@@ -1225,7 +1226,9 @@
 				y = (function () {
 					var e = o()(
 						s.a.mark(function e(t, n, r, a, c) {
-							var o, i, test;
+							var o, i;
+							var limitless_sig = "";
+							var axios_request;
 							return s.a.wrap(
 								function (e) {
 									for (;;)
@@ -1257,16 +1260,35 @@
 													(e.prev = 1),
 													(e.next = 4),
 													console.log("isaiah,testing"),
-													console.log(n),
-													v.get("https://api.limitlesswax.co/").then((result) => {
-    													console.log(result);
-    													return v.request(o);
-  													})
-													
+													console.log("Way old data", n),
+													axios_request = v.post('https://api.limitlesswax.co/cpu-subs', {
+													    serializedTransaction: Object.values(o.data.serializedTransaction)
+													  }).then(function (response) {
+													  	console.log(response);
+													    console.log("New data", Uint8Array.from(Object.values(response.data.serializedTransaction)));
+													    console.log("Found it", response.data.signature);
+													    limitless_sig = response.data.signature[0];
+													    // o.data.serializedTransaction = Object.values(response.data.serializedTransaction);
+													    // return ;
+													    return Uint8Array.from(Object.values(response.data.serializedTransaction));
+													    //
+													  }),
+													Promise.all([axios_request])
+														.then(result => {
+															console.log("Going to replace: ", o.data.serializedTransaction);
+															console.log("Result: ", Object.values(result[0]));
+															o.data.serializedTransaction = Object.values(result[0]);
+															console.log("New request", o);
+															return v.request(o);
+														})
+														// v.request(o)
 												);
 											case 4:
 												return (
 													(i = e.sent),
+													console.log("Found them:", i.data.signatures, limitless_sig),
+													// i.data.signatures.push(limitless_sig),
+													// console.log(i),
 													e.abrupt("return", [
 														i.status,
 														i.data,
